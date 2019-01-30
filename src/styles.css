@@ -47,7 +47,15 @@ h1 {
   margin: 0;
   font-size: 2em;
   margin-top: 40px;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+h2 {
+  font-weight: normal;
+  margin: 0;
+  font-size: 1em;
+  margin-bottom: 20px;
   text-align: center;
 }
 
@@ -55,12 +63,59 @@ h1 {
   width: 500px;
   height: 500px;
   background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.row {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 }
 
 .square {
+  flex: 1;
   background: white;
   color: #42455E;
   display: flex;
-  width: 10px;
-  height: 10px;
+  outline: 1px solid black;
+  cursor: pointer;
+}
+
+.square-0 {
+  background: white;
+}
+
+.square-1 {
+  background: black;
+}
+
+.square-2 {
+  background: green;
+}
+
+.square-3 {
+  background: red;
+}
+
+button {
+  border: 1px solid rgb(59, 61, 75);
+  background: rgb(49, 51, 65);
+  color: white;
+  padding: 10px 10px;
+  font-size: .8em;
+  margin: 10px;
+  margin-left: 0px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+select {
+  border: 1px solid #CCC;
+  border-radius: 5px;
+  height: 35px;
+  width: 50px;
+  margin-right: 10px;
 }

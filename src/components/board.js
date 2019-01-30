@@ -1,20 +1,44 @@
-import React, {PureComponent} from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import Square from './square';
 
 class Board extends PureComponent {
   render() {
-    const {squares} = this.props;
+    const { squares, squareClick } = this.props;
 
-    return <div id="board" />;
+    const rowsHTML = [];
+
+    squares.forEach((rowSquares, x) => {
+      const rowSquaresHTML = [];
+
+      rowSquares.forEach((square, y) => {
+        rowSquaresHTML.push(
+          <Square
+            clickHandler={ () => { squareClick(x, y); }}
+            key={`row-${x}-square-${y}`}
+            type={square} />
+        );
+      });
+
+      rowsHTML.push(
+        <div key={`row-${x}`} className="row">
+          {rowSquaresHTML}
+        </div>
+      );
+    });
+
+    return <div id="board">{rowsHTML}</div>;
   }
 }
 
 Board.propTypes = {
-  squares: PropTypes.arrayOf(PropTypes.object),
+  squareClick: PropTypes.func,
+  squares: PropTypes.arrayOf(PropTypes.array)
 };
 
 Board.defaultProps = {
-  squares: [],
+  squares: [[0, 0], [0, 0]],
+  squareClick () {}
 };
 
 export default Board;
