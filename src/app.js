@@ -18,7 +18,7 @@ class App extends Component {
 
     sizeOptionsHTML.push(<option key="5" value="5">5</option>);
 
-    for (let x = 10; x <= 100; x += 10) {
+    for (let x = 10; x <= 50; x += 10) {
       sizeOptionsHTML.push(<option key={x} value={x}>{x}</option>);
     }
 
