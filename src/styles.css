@@ -82,6 +82,7 @@ h2 {
   display: flex;
   outline: 1px solid black;
   cursor: pointer;
+  font-size: .8em;
 }
 
 .square-0 {
@@ -98,6 +99,10 @@ h2 {
 
 .square-3 {
   background: red;
+}
+
+.path {
+  background: purple;
 }
 
 button {

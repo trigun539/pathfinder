@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Board from './components/board';
-import { setSquareState, updateSquareState, setSize } from './actions';
+import { setSquareState, updateSquareState, setSize, run, clear } from './actions';
 
 class App extends Component {
   render() {
-    const { squares, setSquareState, updateSquareState, setSize } = this.props;
+    const { squares, setSquareState, updateSquareState, setSize, run, clear } = this.props;
     const boardProps = {
       squares,
       squareClick(x, y) {
@@ -16,10 +16,18 @@ class App extends Component {
 
     const sizeOptionsHTML = [];
 
-    sizeOptionsHTML.push(<option key="5" value="5">5</option>);
+    sizeOptionsHTML.push(
+      <option key="5" value="5">
+        5
+      </option>
+    );
 
     for (let x = 10; x <= 50; x += 10) {
-      sizeOptionsHTML.push(<option key={x} value={x}>{x}</option>);
+      sizeOptionsHTML.push(
+        <option key={x} value={x}>
+          {x}
+        </option>
+      );
     }
 
     return (
@@ -51,10 +59,14 @@ class App extends Component {
           }}>
           Clear selection
         </button>
-        <select onChange={ e => { setSize(parseInt(e.target.value, 10)); }}>
-          { sizeOptionsHTML }
+        <select
+          onChange={e => {
+            setSize(parseInt(e.target.value, 10));
+          }}>
+          {sizeOptionsHTML}
         </select>
-        <button>Run</button>
+        <button onClick={ run }>Run</button>
+        <button onClick={ clear }>Clear Board</button>
       </div>
     );
   }
@@ -64,14 +76,18 @@ App.propTypes = {
   squares: PropTypes.arrayOf(PropTypes.array),
   setSquareState: PropTypes.func,
   updateSquareState: PropTypes.func,
-  setSize: PropTypes.func
+  setSize: PropTypes.func,
+  run: PropTypes.func,
+  clear: PropTypes.func,
 };
 
 App.defaultProps = {
   squares: [[0, 0], [0, 0]],
   setSquareState() {},
   updateSquareState() {},
-  setSize() {}
+  setSize() {},
+  run() {},
+  clear() {},
 };
 
 const mapStateToProps = state => {
@@ -90,6 +106,12 @@ const mapDispatchToProps = dispatch => {
     },
     updateSquareState(x, y) {
       dispatch(updateSquareState(x, y));
+    },
+    run() {
+      dispatch(run());
+    },
+    clear() {
+      dispatch(clear());
     }
   };
 };

@@ -12,12 +12,14 @@ class Board extends PureComponent {
       const rowSquaresHTML = [];
 
       rowSquares.forEach((square, y) => {
-        rowSquaresHTML.push(
-          <Square
-            clickHandler={ () => { squareClick(x, y); }}
-            key={`row-${x}-square-${y}`}
-            type={square} />
-        );
+        const squareProps = {
+          ...square,
+          clickHandler() {
+            squareClick(x, y);
+          },
+          key: `row-${x}-square-${y}`
+        };
+        rowSquaresHTML.push(<Square {...squareProps} />);
       });
 
       rowsHTML.push(
@@ -38,7 +40,7 @@ Board.propTypes = {
 
 Board.defaultProps = {
   squares: [[0, 0], [0, 0]],
-  squareClick () {}
+  squareClick() {}
 };
 
 export default Board;
