@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Board from './components/board';
-import { setSquareState, updateSquareState, setSize, run, clear } from './actions';
+import { setSquareState, updateSquareState, setSize, run, clear, step } from './actions';
 
 class App extends Component {
   render() {
-    const { squares, setSquareState, updateSquareState, setSize, run, clear } = this.props;
+    const { squares, setSquareState, updateSquareState, setSize, run, clear, step } = this.props;
     const boardProps = {
       squares,
       squareClick(x, y) {
@@ -65,8 +65,9 @@ class App extends Component {
           }}>
           {sizeOptionsHTML}
         </select>
-        <button onClick={ run }>Run</button>
-        <button onClick={ clear }>Clear Board</button>
+        <button onClick={run}>Run</button>
+        <button onClick={step}>Step</button>
+        <button onClick={clear}>Clear Board</button>
       </div>
     );
   }
@@ -79,6 +80,7 @@ App.propTypes = {
   setSize: PropTypes.func,
   run: PropTypes.func,
   clear: PropTypes.func,
+  step: PropTypes.func
 };
 
 App.defaultProps = {
@@ -88,6 +90,7 @@ App.defaultProps = {
   setSize() {},
   run() {},
   clear() {},
+  step() {}
 };
 
 const mapStateToProps = state => {
@@ -112,6 +115,9 @@ const mapDispatchToProps = dispatch => {
     },
     clear() {
       dispatch(clear());
+    },
+    step() {
+      dispatch(step());
     }
   };
 };

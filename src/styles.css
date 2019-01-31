@@ -101,8 +101,16 @@ h2 {
   background: red;
 }
 
-.path {
+.closed {
   background: purple;
+}
+
+.open {
+  background: blue;
+}
+
+.current {
+  background: brown;
 }
 
 button {

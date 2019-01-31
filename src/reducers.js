@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import algoritm from './algorithm';
-import { SET_SQUARE_STATE, UPDATE_SQUARE_STATE, SET_SIZE, RUN, CLEAR } from './actions';
+import algoritm, { step } from './algorithm';
+import { SET_SQUARE_STATE, UPDATE_SQUARE_STATE, SET_SIZE, RUN, CLEAR, STEP } from './actions';
 
 const size = 5;
 const squares = [];
@@ -15,8 +15,11 @@ for (let x = 0; x < size; x++) {
       f: 0,
       g: 0,
       h: 0,
-      path: false
-    }); 
+      current: false,
+      open: false,
+      closed: false,
+      parent: {}
+    });
   }
 
   squares.push(row);
@@ -26,10 +29,11 @@ const initialState = {
   squares,
   size,
   squareState: 0,
-  startX: null,
-  startY: null,
-  endX: null,
-  endY: null
+  start: null,
+  end: null,
+  current: null,
+  open: [],
+  closed: []
 };
 
 const app = (state = initialState, action) => {
@@ -49,7 +53,10 @@ const app = (state = initialState, action) => {
               f: 0,
               g: 0,
               h: 0,
-              squareState: 0
+              squareState: 0,
+              current: false,
+              open: false,
+              closed: false
             };
           }
         }
@@ -74,48 +81,43 @@ const app = (state = initialState, action) => {
         ...state
       };
 
-      if (state.squareState === 2 &&
-          newSquares[state.startX] &&
-          newSquares[state.startX][state.startY]) {
+      if (state.squareState === 2 && state.start && newSquares[state.start.x] && newSquares[state.start.x][state.start.y]) {
         // Erase old start
-        newSquares[state.startX][state.startY].squareState = 0;
+        newSquares[state.start.x][state.start.y].squareState = 0;
       }
 
       if (state.squareState === 2) {
         // Update start square
-        newState.startX = action.x;
-        newState.startY = action.y;
+        newState.start = state.squares[action.x][action.y];
       }
 
-      if (state.squareState === 3 &&
-          newSquares[state.endX] &&
-          newSquares[state.endX][state.endY]) {
-        newSquares[state.endX][state.endY].squareState = 0;
+      if (state.squareState === 3 && state.end && newSquares[state.end.x] && newSquares[state.end.x][state.end.y]) {
+        newSquares[state.end.x][state.end.y].squareState = 0;
       }
 
       if (state.squareState === 3) {
         // Update end square
-        newState.endX = action.x;
-        newState.endY = action.y;
+        newState.end = state.squares[action.x][action.y];
       }
 
       // Update the square
       newSquares[action.x][action.y].squareState = state.squareState;
-      
+
       // Updated squares state
       newState.squares = newSquares;
 
       return newState;
     }
     case RUN: {
-      const path = algoritm(state.squares,
-               state.squares[state.startX][state.startY],
-               state.squares[state.endX][state.endY]);      
+      const path = algoritm(
+        state.squares,
+        state.squares[state.start.x][state.start.y],
+        state.squares[state.end.x][state.end.y]
+      );
 
       // const backwardsPath = algoritm(state.squares,
-      //          state.squares[state.endX][state.endY],
-      //          state.squares[state.startX][state.startY]);      
-
+      //          state.squares[state.end.x][state.end.y],
+      //          state.squares[state.start.x][state.start.y]);
 
       // const theFinalPath = getUnion(path, backwardsPath);
 
@@ -124,7 +126,7 @@ const app = (state = initialState, action) => {
       path.forEach(pathSquare => {
         newSquares[pathSquare.x][pathSquare.y] = {
           ...pathSquare,
-          path: true
+          closed: true
         };
       });
 
@@ -146,8 +148,10 @@ const app = (state = initialState, action) => {
             f: 0,
             g: 0,
             h: 0,
-            path: false
-          }); 
+            current: false,
+            open: false,
+            closed: false
+          });
         }
 
         newSquares.push(row);
@@ -156,6 +160,17 @@ const app = (state = initialState, action) => {
       return {
         ...state,
         squares: newSquares
+      };
+    }
+    case STEP: {
+      const newStepVals = step(state.start, state.end, state.current, state.squares, state.open, state.closed);
+
+      return {
+        ...state,
+        squares: newStepVals.squares,
+        current: newStepVals.current,
+        open: newStepVals.open,
+        closed: newStepVals.closed
       };
     }
     default:

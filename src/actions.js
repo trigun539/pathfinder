@@ -3,6 +3,7 @@ export const UPDATE_SQUARE_STATE = 'UPDATE_SQUARE_STATE';
 export const SET_SIZE = 'SET_SIZE';
 export const RUN = 'RUN';
 export const CLEAR = 'CLEAR';
+export const STEP = 'STEP';
 
 export function setSize(size) {
   return { type: SET_SIZE, size };
@@ -22,4 +23,8 @@ export function run() {
 
 export function clear() {
   return { type: CLEAR };
+}
+
+export function step() {
+  return { type: STEP };
 }
