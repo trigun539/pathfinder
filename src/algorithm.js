@@ -158,24 +158,40 @@ export function step(start, end, current, squares, open, closed) {
    * If no current, use start point
    */
 
-  if (!current) {
+  if (newOpen.length === 0) {
     const g = 0;
     const h = Math.abs(start.x - end.x) + Math.abs(start.y - end.y);
     newSquares[start.x][start.y].g = g;
     newSquares[start.x][start.y].h = h;
     newSquares[start.x][start.y].f = g + h;
-    newSquares[start.x][start.y].current = true;
-    newSquares[start.x][start.y].closed = true;
     newSquares[start.x][start.y].open = true;
-    newCurrent = start;
-    newOpen.push(start);
 
     return {
       squares: newSquares,
-      current: start,
+      current: newCurrent,
       open: [start],
-      closed: [start]
+      closed: []
     };
+  }
+
+  /**
+   * Dealing with current
+   */
+  
+  if (current) {
+    // Removing from open list
+    newOpen = newOpen.filter(x => !(x.x === current.x && x.y === current.y)); 
+
+    // Dealing with current
+    newSquares[current.x][current.y] = {
+      ...current,
+      open: false,
+      closed: true,
+      current: false
+    };
+
+    // Pushing to closed
+    newClosed.push(current);
   }
 
   /**
@@ -194,11 +210,26 @@ export function step(start, end, current, squares, open, closed) {
     return 0;
   });
 
-  newCurrent = newOpen[0];
-  newCurrent.open = false;
-  newCurrent.closed = true;
-  newCurrent.parent = current;
-  newSquares[newCurrent.x][newCurrent.y] = newCurrent;
+
+  // Getting new current
+  
+  for (let i = 0; i < newOpen.length; i++) {
+    if (newOpen[i + 1] && newOpen[i].f === newOpen[i + 1].f) {
+      // Getting last added if same
+      newCurrent = newOpen[i + 1];
+    } else {
+      newCurrent = newOpen[i];
+      break;
+    }
+  }
+
+  newCurrent = {
+    ...newCurrent,
+    current: true,
+    parent: current
+  };
+
+  newSquares[newCurrent.x][newCurrent.y] = { ...newCurrent };
 
   /**
    * Calculating adjacent
@@ -207,39 +238,42 @@ export function step(start, end, current, squares, open, closed) {
   const adjacent = [];
 
   // Top
-  if (squares[newCurrent.x] &&
-      squares[newCurrent.x][newCurrent.y + 1] &&
-      squares[newCurrent.x][newCurrent.y + 1].squareState !== 1)
-    adjacent.push(squares[newCurrent.x][newCurrent.y + 1]);
+  if (newSquares[newCurrent.x] &&
+      newSquares[newCurrent.x][newCurrent.y + 1] &&
+      !newSquares[newCurrent.x][newCurrent.y + 1].closed &&
+      newSquares[newCurrent.x][newCurrent.y + 1].squareState !== 1)
+    adjacent.push(newSquares[newCurrent.x][newCurrent.y + 1]);
 
   // Left
-  if (squares[newCurrent.x - 1] &&
-      squares[newCurrent.x - 1][newCurrent.y] &&
-      squares[newCurrent.x - 1][newCurrent.y].squareState !== 1)
-    adjacent.push(squares[newCurrent.x - 1][newCurrent.y]);
+  if (newSquares[newCurrent.x - 1] &&
+      newSquares[newCurrent.x - 1][newCurrent.y] &&
+      !newSquares[newCurrent.x - 1][newCurrent.y].closed &&
+      newSquares[newCurrent.x - 1][newCurrent.y].squareState !== 1)
+    adjacent.push(newSquares[newCurrent.x - 1][newCurrent.y]);
 
   // Botttom
-  if (squares[newCurrent.x] &&
-      squares[newCurrent.x][newCurrent.y - 1] &&
-      squares[newCurrent.x][newCurrent.y - 1].squareState !== 1)
-    adjacent.push(squares[newCurrent.x][newCurrent.y - 1]);
+  if (newSquares[newCurrent.x] &&
+      newSquares[newCurrent.x][newCurrent.y - 1] &&
+      !newSquares[newCurrent.x][newCurrent.y - 1].closed &&
+      newSquares[newCurrent.x][newCurrent.y - 1].squareState !== 1)
+    adjacent.push(newSquares[newCurrent.x][newCurrent.y - 1]);
 
   // Right
-  if (squares[newCurrent.x + 1] &&
-      squares[newCurrent.x + 1][newCurrent.y] &&
-      squares[newCurrent.x + 1][newCurrent.y].squareState !== 1)
+  if (newSquares[newCurrent.x + 1] &&
+      newSquares[newCurrent.x + 1][newCurrent.y] &&
+      !newSquares[newCurrent.x + 1][newCurrent.y].closed &&
+      newSquares[newCurrent.x + 1][newCurrent.y].squareState !== 1)
     adjacent.push(squares[newCurrent.x + 1][newCurrent.y]);
 
   // Calculate adjacent ghf
   adjacent.forEach(square => {
-    
     // Update open list
     if (!square.open && !square.closed) {
       const g = newCurrent.g + 1;
       const h = Math.abs(square.x - end.x) + Math.abs(square.y - end.y);
       const f = g + h;
 
-      const newSquare = { ...square, g, h, f, open: true };
+      const newSquare = { ...square, g, h, f, open: true, parent: current };
       newSquares[newSquare.x][newSquare.y] = newSquare;
 
       newOpen.push(newSquare);
@@ -247,14 +281,14 @@ export function step(start, end, current, squares, open, closed) {
 
     if (square.open && !square.closed) {
       // Update f if lower f
-      const g = square.parent.g + 1;
+      const g = newCurrent.g + 1;
       const h = Math.abs(square.x - end.x) + Math.abs(square.y - end.y);
       const f = g + h;
 
       if (f < square.f) {
         // Update square and its parent
          
-        const newSquare = { ...square, g, h, f, parent: current };
+        const newSquare = { ...square, g, h, f, parent: newCurrent };
 
         newSquares[newSquare.x][newSquare.y] = newSquare;
       }

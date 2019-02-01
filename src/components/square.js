@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 
 class Square extends PureComponent {
   render() {
-    const { x, y, f, g, h, squareState, clickHandler, close, open, current } = this.props;
+    const { x, y, f, g, h, squareState, clickHandler, closed, open, current } = this.props;
     // Square states
     // 0 = none
     // 1 = wall
     // 2 = start
     // 3 = end
 
-    const closeClass = close && !(squareState === 2 || squareState === 3) ? 'close' : '';
+    const closeClass = closed && !(squareState === 2 || squareState === 3) ? 'closed' : '';
     const openClass = open && !(squareState === 2 || squareState === 3) ? 'open' : '';
     const currentClass = current && !(squareState === 2 || squareState === 3) ? 'current' : '';
 

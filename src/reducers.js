@@ -138,9 +138,9 @@ const app = (state = initialState, action) => {
     case CLEAR: {
       const newSquares = [];
 
-      for (let x = 0; x < size; x++) {
+      for (let x = 0; x < state.size; x++) {
         const row = [];
-        for (let y = 0; y < size; y++) {
+        for (let y = 0; y < state.size; y++) {
           row.push({
             x,
             y,
@@ -159,7 +159,9 @@ const app = (state = initialState, action) => {
 
       return {
         ...state,
-        squares: newSquares
+        squares: newSquares,
+        open: [],
+        closed: []
       };
     }
     case STEP: {

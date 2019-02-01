@@ -110,7 +110,7 @@ h2 {
 }
 
 .current {
-  background: brown;
+  background: brown !important;
 }
 
 button {
