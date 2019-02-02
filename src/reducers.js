@@ -109,30 +109,14 @@ const app = (state = initialState, action) => {
       return newState;
     }
     case RUN: {
-      const path = algoritm(
-        state.squares,
-        state.squares[state.start.x][state.start.y],
-        state.squares[state.end.x][state.end.y]
-      );
-
-      // const backwardsPath = algoritm(state.squares,
-      //          state.squares[state.end.x][state.end.y],
-      //          state.squares[state.start.x][state.start.y]);
-
-      // const theFinalPath = getUnion(path, backwardsPath);
-
-      const newSquares = [...state.squares];
-
-      path.forEach(pathSquare => {
-        newSquares[pathSquare.x][pathSquare.y] = {
-          ...pathSquare,
-          closed: true
-        };
-      });
+      const result = algoritm(state.squares, state.start, state.end);
 
       return {
         ...state,
-        squares: newSquares
+        squares: result.squares,
+        open: result.open,
+        closed: result.closed,
+        current: result.current
       };
     }
     case CLEAR: {
