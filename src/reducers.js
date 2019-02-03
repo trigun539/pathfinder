@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import algoritm, { step } from './algorithm';
 import { SET_SQUARE_STATE, UPDATE_SQUARE_STATE, SET_SIZE, RUN, CLEAR, STEP } from './actions';
 
-const size = 5;
+const size = 20;
 const squares = [];
 
 for (let x = 0; x < size; x++) {
@@ -18,6 +18,7 @@ for (let x = 0; x < size; x++) {
       current: false,
       open: false,
       closed: false,
+      path: false,
       parent: {}
     });
   }
@@ -109,7 +110,31 @@ const app = (state = initialState, action) => {
       return newState;
     }
     case RUN: {
+      const backwardSquares = [];
+      for (let x = 0; x < state.size; x++) {
+        const row = [];
+        for (let y = 0; y < state.size; y++) {
+          row.push({
+            ...state.squares[x][y]
+          });
+        }
+        backwardSquares.push(row);
+      }
       const result = algoritm(state.squares, state.start, state.end);
+      const backwards = algoritm(backwardSquares, { ...state.end }, { ...state.start });
+
+
+      for (let x = 0; x < state.size; x++) {
+        for (let y = 0; y < state.size; y++) {
+          if (backwards.squares[x][y].closed && result.squares[x][y].closed) {
+            result.squares[x][y] = {
+              ...result.squares[x][y],
+              closed: false,
+              path: true
+            };
+          }
+        }
+      }
 
       return {
         ...state,
