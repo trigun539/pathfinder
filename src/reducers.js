@@ -132,6 +132,11 @@ const app = (state = initialState, action) => {
               closed: false,
               path: true
             };
+          } else if (backwards.squares[x][y].closed) {
+            result.squares[x][y] = {
+              ...result.squares[x][y],
+              closed: true
+            };
           }
         }
       }
