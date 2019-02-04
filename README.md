@@ -1,6 +1,10 @@
 # Pathfinder
 
-An example of an A* path finding algorithm implementation
+An app to easily try different pathfinding algorithms.
+
+## Algorithms Supported
+
+- A*
 
 ## Running
 
